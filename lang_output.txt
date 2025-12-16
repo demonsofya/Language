@@ -1,0 +1,109 @@
+PUSH 0
+POPREG BX
+PUSH 0
+POPREG CX
+PUSH 0
+POPREG DX
+CALL :MAIN
+HLT
+:MAIN
+PUSH 0 ;pushing number
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+POPM [BX] ; printing equalization
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+IN
+POPM [BX] ; printing IN
+PUSH 2 ;pushing number
+PUSH 1 ;pushing number
+ADD ; printing operation
+PUSHREG CX
+PUSH 1
+ADD
+POPREG BX ; putting var index in BX
+POPM [BX] ; printing equalization
+PUSHREG CX
+PUSH 1
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+OUT
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+PUSH 0 ;pushing number
+JBE :end_if_0
+PUSH 2 ;pushing number
+PUSH 5 ;pushing number
+ADD ; printing operation
+PUSHREG CX
+PUSH 1
+ADD
+POPREG BX ; putting var index in BX
+POPM [BX] ; printing equalization
+PUSHREG CX
+PUSH 1
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+OUT
+PUSH 5 ;pushing number
+PUSH 5 ;pushing number
+MUL ; printing operation
+PUSHREG CX
+PUSH 1
+ADD
+POPREG BX ; putting var index in BX
+POPM [BX] ; printing equalization
+PUSHREG CX
+PUSH 1
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+OUT
+:end_if_0
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+OUT
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+PUSH 1 ;pushing number
+ADD ; printing operation
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+POPM [BX] ; printing equalization
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+OUT
+:hui
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+PUSHM [BX] ; printing variable
+PUSH 1 ;pushing number
+ADD ; printing operation
+PUSHREG CX
+PUSH 0
+ADD
+POPREG BX ; putting var index in BX
+POPM [BX] ; printing equalization
+HLT

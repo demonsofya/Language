@@ -97,21 +97,6 @@ Node_t *CreateNewLogicalOperatorNode(Node_t *left, Node_t *right, LogicalOperato
     return CreateNewNode(LogicalOperatorType, left, right, new_value);
 }
 
-Node_t *CreateNewInNode() {
-
-    return CreateNewNode(InType, NULL, NULL, {});
-}
-
-Node_t *CreateNewReturnNode() {
-
-    return CreateNewNode(ReturnType, NULL, NULL, {});
-}
-
-Node_t *CreateNewPrintNode() {
-
-    return CreateNewNode(PrintType, NULL, NULL, {});
-}
-
 Node_t *CopyNode(Node_t *node) {
     
     return CreateNewNode(node->type, node->left, node->right, node->value);

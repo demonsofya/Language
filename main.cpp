@@ -6,6 +6,8 @@
 #include "lib/tree/diff_struct.h"
 #include "tokens.h"
 #include "reading_tokens.h"
+#include "assembling.h"
+#include "middle_end.h"
 
 #include "TXLib.h"
 
@@ -20,6 +22,11 @@ int main()
     
     Tree_t *tree = GetTokensGraph();
     TreeDump(tree, __FILE__, __FUNCTION__, __LINE__, "Dump in main", 0);
+
+    PutVariablesPosesInNametableInTree(tree);
+    TreeDump(tree, __FILE__, __FUNCTION__, __LINE__, "Dump after putting poses from curr nametable", 0);
+
+    CreateAsmFile(tree);
 
     return 0;
 }

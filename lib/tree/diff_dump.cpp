@@ -281,21 +281,6 @@ int DrawDotNode(const Node_t *node, FILE *dot_file_ptr, int rank_num, int node_n
                                 node, rank_num); 
             break;
 
-        case InType:
-            fprintf(dot_file_ptr, "%s [label = \"{ type = IN [%d] | { <left> left | 0 } | [%p]  }\", rank = %d]\n",
-                                curr_node_name, node->type, node, rank_num); 
-            break;     
-
-        case ReturnType:
-            fprintf(dot_file_ptr, "%s [label = \"{ type = RET [%d] | { <left> left | 0 } | [%p]  }\", rank = %d]\n",
-                                curr_node_name, node->type, node, rank_num); 
-            break; 
-
-        case PrintType:
-            fprintf(dot_file_ptr, "%s [label = \"{ type = OUT [%d] | { <left> left | 0 } | [%p]  }\", rank = %d]\n",
-                                curr_node_name, node->type, node, rank_num); 
-            break;
-
         default:
             fprintf(stderr, "%s [label = \"{ type = ? [%d] | value = %.0lf | { 0 | 0 } | [%p]  }\", rank = %d]\n",
                             curr_node_name, node->type, node->value.num_type_value, node, rank_num);

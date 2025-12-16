@@ -1,3 +1,6 @@
+#ifndef READIN_TOKENS_H_INCLUDED
+#define READIN_TOKENS_H_INCLUDED
+
 #include "lib/tree/diff_struct.h"
 
 #define GET_CURR_VARIABLES_TABLE functions_array[curr_function_num]->variables_table
@@ -29,3 +32,5 @@ Node_t *GetSubstractionOrAddictionOperation(Node_t **tokens_array, int *curr_tok
 Node_t *GetMultiplicationOrDivisionOperation(Node_t **tokens_array, int *curr_token_num);
 Node_t *GetPowOperation(Node_t **tokens_array, int *curr_token_num);
 Node_t *GetBracket(Node_t **tokens_array, int *curr_token_num);
+
+#endif

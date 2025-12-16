@@ -9,10 +9,12 @@
 #define GET_OPERATION_VALUE(node) node->value.operation_type_value
 #define GET_OPERATION_TEX_NAME(node) node->value.operation_type_value.latex_operation_name
 #define GET_OPERATION_NAME(node) node->value.operation_type_value.operation_name
+#define GET_OPERATION_ASM_NAME(node) node->value.operation_type_value.operation_asm_name
 
 #define GET_VARIABLE_NAME(node) variables_array[node->value.variable_index_in_array].variable_name
 #define GET_VARIABLE_VALUE(node) variables_array[node->value.variable_index_in_array].variable_value
 #define GET_VARIABLE_HASH(node) variables_array[node->value.variable_index_in_array].variable_hash
+#define GET_VARIABLE_ARRAY_POS(node) node->value.variable_index_in_array
 
 #define GET_CONTROL_STRUCTURE_TYPE(node) node->value.control_structure_type_value.control_structure_type
 
@@ -46,10 +48,7 @@ enum NodeTypes {
     EmptyOperatorType,
     FunctionCallType,
     FunctionType,
-    NewFuncType,
-    InType,
-    ReturnType,
-    PrintType
+    NewFuncType
 };
 
 struct DiffType_t {
@@ -147,6 +146,7 @@ struct Operation_t {
     int         operation_hash;
     double    (*operation_func_ptr) (double first_num, double second_num);
     OperationArgumentsCount arguments_count;
+    const char *operation_asm_name;
 };
 
 struct ComparisonOperator_t {
@@ -253,26 +253,26 @@ ControlStructure_t const CONTROL_STRUCTURES_ARRAY[] = {
     {PrintOperator,                 "¬€¬≈—“»",      CountStringHashDJB2("¬€¬≈—“»")      } };
 
 Operation_t const OPERATIONS_ARRAY[] = {
-    { AddictionOperation,     "œÀﬁ—",      CountStringHashDJB2("œÀﬁ—"),     RunAddictionOperation      , Binary     },
-    { SubstractionOperation,  "Ã»Õ”—",     CountStringHashDJB2("Ã»Õ”—"),    RunSubstractionOperation   , Binary     },
-    { MultiplicationOperation,"”ÃÕŒ∆»“‹",  CountStringHashDJB2("”ÃÕŒ∆»“‹"), RunMultiplicationOperation , Binary     },
-    { DivisionOperation,      "–¿«ƒ≈À»“‹", CountStringHashDJB2("–¿«ƒ≈À»“‹"),RunDIvisionOperation       , Binary     }, 
-    { SinOperation,           "—»Õ”—",     CountStringHashDJB2("—»Õ”—"),    RunSinOperation            , Unary      },
-    { CosOperation,           " Œ—»Õ”—",   CountStringHashDJB2(" Œ—»Õ”—"),  RunCosOperation            , Unary      },
-    { PowOperation,           "—“≈œ≈Õ‹",   CountStringHashDJB2("—“≈œ≈Õ‹"),  RunPowOperation            , Binary     },
-    { SinHyperbolicOperation, "ÿ»Õ”—",     CountStringHashDJB2("ÿ»Õ”—"),    RunSinHyperbolicOperation  , Unary      },
-    { CosHyperbolicOperation, "◊Œ—»Õ”—",   CountStringHashDJB2("ch"),       RunCosHyperbolicOperation  , Unary      }, 
-    { TanOperation,           "“¿Õ√≈Õ—",   CountStringHashDJB2("“¿Õ√≈Õ—"),  RunTanOperation            , Unary      },
-    { TanHyperbolicOperation, "th",        CountStringHashDJB2("th"),       RunTanHyperbolicOperation  , Unary      },
-    { ArcSinOperation,        "¿– —»Õ”—",  CountStringHashDJB2("¿– —»Õ”—"), RunArcSinOperation         , Unary      },
-    { ArcCosOperation,        "¿–  Œ—»Õ”—",CountStringHashDJB2("¿–  Œ—»Õ”—"),RunArcCosOperation        , Unary      }, 
-    { ArcTanOperation,        "¿– “¿Õ√≈Õ—",CountStringHashDJB2("¿– “¿Õ√≈Õ—"),RunArcTanOperation        , Unary      } };
+    { AddictionOperation,     "œÀﬁ—",      CountStringHashDJB2("œÀﬁ—"),     RunAddictionOperation      , Binary,     "ADD"},
+    { SubstractionOperation,  "Ã»Õ”—",     CountStringHashDJB2("Ã»Õ”—"),    RunSubstractionOperation   , Binary,     "SUB"},
+    { MultiplicationOperation,"”ÃÕŒ∆»“‹",  CountStringHashDJB2("”ÃÕŒ∆»“‹"), RunMultiplicationOperation , Binary,     "MUL"},
+    { DivisionOperation,      "–¿«ƒ≈À»“‹", CountStringHashDJB2("–¿«ƒ≈À»“‹"),RunDIvisionOperation       , Binary,     "DIV"}, 
+    { SinOperation,           "—»Õ”—",     CountStringHashDJB2("—»Õ”—"),    RunSinOperation            , Unary ,     },
+    { CosOperation,           " Œ—»Õ”—",   CountStringHashDJB2(" Œ—»Õ”—"),  RunCosOperation            , Unary ,     },
+    { PowOperation,           "—“≈œ≈Õ‹",   CountStringHashDJB2("—“≈œ≈Õ‹"),  RunPowOperation            , Binary,     "POW"},
+    { SinHyperbolicOperation, "ÿ»Õ”—",     CountStringHashDJB2("ÿ»Õ”—"),    RunSinHyperbolicOperation  , Unary ,     },
+    { CosHyperbolicOperation, "◊Œ—»Õ”—",   CountStringHashDJB2("ch"),       RunCosHyperbolicOperation  , Unary ,     }, 
+    { TanOperation,           "“¿Õ√≈Õ—",   CountStringHashDJB2("“¿Õ√≈Õ—"),  RunTanOperation            , Unary ,     },
+    { TanHyperbolicOperation, "th",        CountStringHashDJB2("th"),       RunTanHyperbolicOperation  , Unary ,     },
+    { ArcSinOperation,        "¿– —»Õ”—",  CountStringHashDJB2("¿– —»Õ”—"), RunArcSinOperation         , Unary ,     },
+    { ArcCosOperation,        "¿–  Œ—»Õ”—",CountStringHashDJB2("¿–  Œ—»Õ”—"),RunArcCosOperation        , Unary ,     }, 
+    { ArcTanOperation,        "¿– “¿Õ√≈Õ—",CountStringHashDJB2("¿– “¿Õ√≈Õ—"),RunArcTanOperation        , Unary ,     } };
 
-const int OPERATIONS_COUNT = sizeof(OPERATIONS_ARRAY) / sizeof(Operation_t);
-const int CONTROL_STRUCTURES_COUNT = sizeof(CONTROL_STRUCTURES_ARRAY) / sizeof(ControlStructure_t);
-const int COMPARISON_OPERATORS_COUNT = sizeof(COMPARISON_OPERATORS_ARRAY) / sizeof(ComparisonOperator_t);
-const int SERVICE_STRUCTURES_COUNT = sizeof(SERVICE_STRUCTURES_ARRAY) / sizeof(ServiceStructure_t);
-const int LOGICAL_OPERATORS_COUNT = sizeof(LOGICAL_OPERATORS_ARRAY) / sizeof(LogicalOperator_t);
+const int OPERATIONS_COUNT           = sizeof(OPERATIONS_ARRAY)             / sizeof(Operation_t);
+const int CONTROL_STRUCTURES_COUNT   = sizeof(CONTROL_STRUCTURES_ARRAY)     / sizeof(ControlStructure_t);
+const int COMPARISON_OPERATORS_COUNT = sizeof(COMPARISON_OPERATORS_ARRAY)   / sizeof(ComparisonOperator_t);
+const int SERVICE_STRUCTURES_COUNT   = sizeof(SERVICE_STRUCTURES_ARRAY)     / sizeof(ServiceStructure_t);
+const int LOGICAL_OPERATORS_COUNT    = sizeof(LOGICAL_OPERATORS_ARRAY)      / sizeof(LogicalOperator_t);
 
 const bool OperationsArrayCheckingResult = CheckIfArraysCorrect();
 
@@ -294,9 +294,6 @@ Node_t *CreateNewControlNode(Node_t *left, Node_t *right, ControlStructure_t val
 Node_t *CreateNewLogicalOperatorNode(Node_t *left, Node_t *right, LogicalOperator_t value);
 Node_t *CreateEmptyNode();
 Node_t *CreateNewFuncNode();
-Node_t *CreateNewInNode();
-Node_t *CreateNewReturnNode();
-Node_t *CreateNewPrintNode();
 
 Node_t *SimplifyDiffTree(Node_t *node);
 
