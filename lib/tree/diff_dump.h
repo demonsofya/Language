@@ -10,7 +10,7 @@
 #include "diff_struct.h"
 
 //=============================================================================
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
     #define ON_DEBUG(...) __VA_ARGS__

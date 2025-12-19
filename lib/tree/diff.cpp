@@ -4,7 +4,7 @@
 #include <math.h>
 #include <string.h>
 
-#include "diff_struct.h"
+#include "../../../diff_struct.h"
 #include "../math/mathematics.h"
 
 //#include "TXlib.h"
@@ -252,21 +252,6 @@ Node_t *DeleteBothNeutralElementsAndChangeValueToZero(Node_t *curr_node, bool *I
     return curr_node;
 }
 
-double RunArcSinOperation(double first_num, double second_num) {
-
-    return asin(first_num);
-}
-
-double RunArcCosOperation(double first_num, double second_num) {
-
-    return acos(first_num);
-}
-
-double RunArcTanOperation(double first_num, double second_num) {
-
-    return atan(first_num);
-}
-
 double RunAddictionOperation(double first_num, double second_num) {
 
     return first_num + second_num;
@@ -289,34 +274,13 @@ double RunSubstractionOperation(double first_num, double second_num) {
     return first_num - second_num;
 }
 
-double RunSinOperation(double first_num, double second_num) {
-    return sin(first_num);
-}
-
-double RunCosOperation(double first_num, double second_num) {
-    return cos(first_num);
-}
-
 double RunPowOperation(double first_num, double second_num) {
     return pow(first_num, second_num);
 }
 
-double RunSinHyperbolicOperation(double first_num, double second_num) {
-    return sinh(first_num);
+double RunSqrtOperation(double first_num, double second_num) {
+    return sqrt(first_num);
 }
-
-double RunCosHyperbolicOperation(double first_num, double second_num) {
-    return cosh(first_num);
-}
-
-double RunTanOperation(double first_num, double second_num) {
-    return tan(first_num);
-}
-
-double RunTanHyperbolicOperation(double first_num, double second_num) {
-    return tanh(first_num);
-}
-
 
 void DeleteNode(Node_t *node) {
 

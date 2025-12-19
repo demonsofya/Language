@@ -79,16 +79,8 @@ enum Operations {
     SubstractionOperation,
     MultiplicationOperation,
     DivisionOperation,
-    SinOperation,
-    CosOperation,
     PowOperation,
-    SinHyperbolicOperation,
-    CosHyperbolicOperation,
-    TanOperation,
-    TanHyperbolicOperation,
-    ArcSinOperation,
-    ArcCosOperation,
-    ArcTanOperation
+    SquareRootOperation
 };
 
 enum OperationArgumentsCount {
@@ -138,6 +130,7 @@ struct ServiceStructure_t {
     ServiceStructures service_structure_type;
     const char       *service_structure_name;
     int               service_structure_hash;
+    const char       *service_back_standard_name;
 };
 
 struct Operation_t {
@@ -147,18 +140,21 @@ struct Operation_t {
     double    (*operation_func_ptr) (double first_num, double second_num);
     OperationArgumentsCount arguments_count;
     const char *operation_asm_name;
+    const char *operation_back_standard_name;
 };
 
 struct ComparisonOperator_t {
     ComparisonOperators comparison_operator_type;
     const char         *comparison_operator_name;
     int                 comparison_operator_hash;
+    const char         *comparison_back_standard_name;
 };
 
 struct ControlStructure_t {
     ControlStructures control_structure_type;
     const char       *control_structure_name;
     int               control_structure_hash;
+    const char       *control_back_standard_name;
 };
 
 struct Function_t {
@@ -166,6 +162,7 @@ struct Function_t {
     int params_count;
     int function_num;
     int variables_count;
+    int function_hash;
     Variable_t *variables_table;
 };
 
@@ -191,6 +188,7 @@ struct Node_t {
 struct Tree_t {
     Node_t *root;
     int nodes_count;
+    unsigned int functions_count;
 };
 
 struct FunctionTable_t {
@@ -203,16 +201,9 @@ double RunAddictionOperation(double first_num, double second_num);
 double RunMultiplicationOperation(double first_num, double second_num);
 double RunDIvisionOperation(double first_num, double second_num);
 double RunSubstractionOperation(double first_num, double second_num);
-double RunSinOperation(double first_num, double second_num);
 double RunCosOperation(double first_num, double second_num);
 double RunPowOperation(double first_num, double second_num);
-double RunSinHyperbolicOperation(double first_num, double second_num);
-double RunCosHyperbolicOperation(double first_num, double second_num);
-double RunTanOperation(double first_num, double second_num);
-double RunTanHyperbolicOperation(double first_num, double second_num);
-double RunArcSinOperation(double first_num, double second_num);
-double RunArcCosOperation(double first_num, double second_num);
-double RunArcTanOperation(double first_num, double second_num);
+double RunSqrtOperation(double first_num, double second_num);
 
 int CountStringHashDJB2(const char *curr_string);
 
@@ -221,19 +212,19 @@ bool CheckIfArraysCorrect();
 ServiceStructure_t const SERVICE_STRUCTURES_ARRAY[] = {
     {ProgramBeginStructure,         "мювюкн",       CountStringHashDJB2("мювюкн")       }, 
     {ProgramEndStructure,           "йнмеж",        CountStringHashDJB2("йнмеж")        },
-    {FunctionStructure,             "тсмйжхъ",      CountStringHashDJB2("тсмйжхъ")      },
-    {OpenBracketStructure,          "(",            CountStringHashDJB2("(")            },
-    {CloseBracketStructure,         ")",            CountStringHashDJB2(")")            },
+    {FunctionStructure,             "тсмйжхъ",      CountStringHashDJB2("тсмйжхъ")      , "FUNC"},
+    {OpenBracketStructure,          "(",            CountStringHashDJB2("(")            , "("   },
+    {CloseBracketStructure,         ")",            CountStringHashDJB2(")")            , ")"   },
     {BodyBeginStructure,            "юанаю",        CountStringHashDJB2("юанаю")        },
     {ComaStructure,                 ",",            CountStringHashDJB2(",")            } };
 
 ComparisonOperator_t const COMPARISON_OPERATORS_ARRAY[] = {
-    {EqualityComparison,            "пюбмн",        CountStringHashDJB2("пюбмн")        },
-    {LessComparison,                "лемэье",       CountStringHashDJB2("лемэье")       },
-    {LessOrEqualComparison,         "лемэьепюбмн",  CountStringHashDJB2("лемэьепюбмн")  },
-    {GreaterComparison,             "анкэье",       CountStringHashDJB2("анкэье")       },
-    {GreaterOrEqualityComparison,   "анкэьепюбмн",  CountStringHashDJB2("анкэьепюбмн")  },
-    {DenialComparison,              "мепюбмн",      CountStringHashDJB2("мепюбмн")      } };
+    {EqualityComparison,            "пюбмн",        CountStringHashDJB2("пюбмн")        , "=="  },
+    {LessComparison,                "лемэье",       CountStringHashDJB2("лемэье")       , "<"   },
+    {LessOrEqualComparison,         "лемэьепюбмн",  CountStringHashDJB2("лемэьепюбмн")  , "<="  },
+    {GreaterComparison,             "анкэье",       CountStringHashDJB2("анкэье")       , ">"   },
+    {GreaterOrEqualityComparison,   "анкэьепюбмн",  CountStringHashDJB2("анкэьепюбмн")  , ">="  },
+    {DenialComparison,              "мепюбмн",      CountStringHashDJB2("мепюбмн")      , "!="  } };
 
 LogicalOperator_t const LOGICAL_OPERATORS_ARRAY[] = {
     {AndLogicalOperator,            "х",            CountStringHashDJB2("х")            },
@@ -241,32 +232,24 @@ LogicalOperator_t const LOGICAL_OPERATORS_ARRAY[] = {
     {NotLogicalOperator,            "ме",           CountStringHashDJB2("ме")           } };
 
 ControlStructure_t const CONTROL_STRUCTURES_ARRAY[] = {
-    {BeginWhileCycle,               "онйю",         CountStringHashDJB2("онйю")         },
+    {BeginWhileCycle,               "онйю",         CountStringHashDJB2("онйю")         , "while"   },
     {EndWhileCycle,                 "йнмежонйю",    CountStringHashDJB2("йнмежонйю")    },
-    {IfOperator,                    "еякх",         CountStringHashDJB2("еякх")         },
-    {IfElseOperator,                "хмюве",        CountStringHashDJB2("хмюве")        },
+    {IfOperator,                    "еякх",         CountStringHashDJB2("еякх")         , "if"      },
+    {IfElseOperator,                "хмюве",        CountStringHashDJB2("хмюве")        , "if-else" },
     {EndIfOperator,                 "йнмежеякх",    CountStringHashDJB2("йнмежеякх")    }, 
-    {EqualizationOperator,          "гюлемхрэ",     CountStringHashDJB2("гюлемхрэ")     },
+    {EqualizationOperator,          "гюлемхрэ",     CountStringHashDJB2("гюлемхрэ")     , "="       },
     {DeclarationOperator,           "назъбхрэ",     CountStringHashDJB2("назъбхрэ")     },
-    {InVariableOperator,            "онксвхрэ",     CountStringHashDJB2("онксвхрэ")     },
-    {ReturnOperator,                "бепмсрэ",      CountStringHashDJB2("бепмсрэ")      },
-    {PrintOperator,                 "бшбеярх",      CountStringHashDJB2("бшбеярх")      } };
+    {InVariableOperator,            "онксвхрэ",     CountStringHashDJB2("онксвхрэ")     , "IN"      },
+    {ReturnOperator,                "бепмсрэ",      CountStringHashDJB2("бепмсрэ")      , "RET"     },
+    {PrintOperator,                 "бшбеярх",      CountStringHashDJB2("бшбеярх")      , "PRINT"   } };
 
 Operation_t const OPERATIONS_ARRAY[] = {
-    { AddictionOperation,     "окчя",      CountStringHashDJB2("окчя"),     RunAddictionOperation      , Binary,     "ADD"},
-    { SubstractionOperation,  "лхмся",     CountStringHashDJB2("лхмся"),    RunSubstractionOperation   , Binary,     "SUB"},
-    { MultiplicationOperation,"слмнфхрэ",  CountStringHashDJB2("слмнфхрэ"), RunMultiplicationOperation , Binary,     "MUL"},
-    { DivisionOperation,      "пюгдекхрэ", CountStringHashDJB2("пюгдекхрэ"),RunDIvisionOperation       , Binary,     "DIV"}, 
-    { SinOperation,           "яхмся",     CountStringHashDJB2("яхмся"),    RunSinOperation            , Unary ,     },
-    { CosOperation,           "йняхмся",   CountStringHashDJB2("йняхмся"),  RunCosOperation            , Unary ,     },
-    { PowOperation,           "яреоемэ",   CountStringHashDJB2("яреоемэ"),  RunPowOperation            , Binary,     "POW"},
-    { SinHyperbolicOperation, "ьхмся",     CountStringHashDJB2("ьхмся"),    RunSinHyperbolicOperation  , Unary ,     },
-    { CosHyperbolicOperation, "вняхмся",   CountStringHashDJB2("ch"),       RunCosHyperbolicOperation  , Unary ,     }, 
-    { TanOperation,           "рюмцемя",   CountStringHashDJB2("рюмцемя"),  RunTanOperation            , Unary ,     },
-    { TanHyperbolicOperation, "th",        CountStringHashDJB2("th"),       RunTanHyperbolicOperation  , Unary ,     },
-    { ArcSinOperation,        "юпйяхмся",  CountStringHashDJB2("юпйяхмся"), RunArcSinOperation         , Unary ,     },
-    { ArcCosOperation,        "юпййняхмся",CountStringHashDJB2("юпййняхмся"),RunArcCosOperation        , Unary ,     }, 
-    { ArcTanOperation,        "юпйрюмцемя",CountStringHashDJB2("юпйрюмцемя"),RunArcTanOperation        , Unary ,     } };
+    { AddictionOperation,     "окчя",      CountStringHashDJB2("окчя"),     RunAddictionOperation,     Binary,     "ADD" ,     "ADD" },
+    { SubstractionOperation,  "лхмся",     CountStringHashDJB2("лхмся"),    RunSubstractionOperation,  Binary,     "SUB" ,     "SUB" },
+    { MultiplicationOperation,"слмнфхрэ",  CountStringHashDJB2("слмнфхрэ"), RunMultiplicationOperation,Binary,     "MUL" ,     "MUL" },
+    { DivisionOperation,      "пюгдекхрэ", CountStringHashDJB2("пюгдекхрэ"),RunDIvisionOperation,      Binary,     "DIV" ,     "DIV" }, 
+    { PowOperation,           "яреоемэ",   CountStringHashDJB2("яреоемэ"),  RunPowOperation,           Binary,     "POW" ,     "POW" },
+    { SquareRootOperation,    "йнпемэ",    CountStringHashDJB2("йнпемэ"),   RunSqrtOperation,          Unary ,     "SQRT",     "SQRT"} };
 
 const int OPERATIONS_COUNT           = sizeof(OPERATIONS_ARRAY)             / sizeof(Operation_t);
 const int CONTROL_STRUCTURES_COUNT   = sizeof(CONTROL_STRUCTURES_ARRAY)     / sizeof(ControlStructure_t);
@@ -281,6 +264,8 @@ extern unsigned int variables_count;
 
 extern Function_t **functions_array;
 extern unsigned int curr_function_num;
+
+extern unsigned int functions_count;
 
 Node_t *CreateNewNode(NodeTypes type, Node_t *left, Node_t *right, value_t value);
 Node_t *CopyNode(Node_t *node);
@@ -312,5 +297,7 @@ double CountNodeValue(Node_t* node);
 void FillVariableValue(const char *variable_name, double variable_value);
 
 Node_t *SetNodeParent(Node_t *node, Node_t *parent);
+
+void SyntaxErrorFunction(const char *file_name, const char *function_name, int line_number);
 
 #endif // DIFF_STRUCT_H_INCLUDED

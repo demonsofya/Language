@@ -227,7 +227,7 @@ int DrawDotNode(const Node_t *node, FILE *dot_file_ptr, int rank_num, int node_n
 
         case VariableType:
             fprintf(dot_file_ptr, "%s [label = \"{ type = VAR [%d] | value = %d | %s = %.0lf [%d] | { 0 | 0 } | [%p]  }\", rank = %d]\n",
-                                curr_node_name,  node->type, node->value.variable_index_in_array,variables_array[node->value.variable_index_in_array].variable_name, variables_array[node->value.variable_index_in_array].variable_value,
+                                curr_node_name,  node->type, node->value.variable_index_in_array, TranslateWordToEnglish(variables_array[node->value.variable_index_in_array].variable_name), variables_array[node->value.variable_index_in_array].variable_value,
                                 node->value.variable_index_in_array, node, rank_num); 
             break;
 
